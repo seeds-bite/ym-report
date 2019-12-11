@@ -1,14 +1,16 @@
 package by.rgs.demo.model;
 
+import org.springframework.http.HttpStatus;
+
 public class Message {
 
-	private int status;
+	private HttpStatus status;
 	private String message;
 	
-	public int getStatus() {
+	public HttpStatus getStatus() {
 		return status;
 	}
-	public void setStatus(int status) {
+	public void setStatus(HttpStatus status) {
 		this.status = status;
 	}
 	public String getMessage() {
@@ -18,14 +20,14 @@ public class Message {
 		this.message = message;
 	}
 	
-	public Message(int status, String message) {
-		this.status = status;
+	public Message(HttpStatus internalServerError, String message) {
+		this.status = internalServerError;
 		this.message = message;
 	}
 	
 	@Override
 	public String toString() {
-		return "Message [status=" + status + ", message=" + message + "]";
+		return "Message [status=" + status.toString() + ", message=" + message + "]";
 	}
 	
 	

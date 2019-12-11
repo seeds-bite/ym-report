@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,6 +20,8 @@ import by.rgs.demo.service.UpdateReportService;
 @Service
 public class UpdateReportServiceImpl implements UpdateReportService {
 	
+	public static final String uploadingDirectory = System.getProperty("user.dir") + "/reports/";
+	
 	@Override
 	public Message updateReport(MetricsConfiguration metricsConf) {
 		Metrics dataMetrics = getMetricsFromYM(metricsConf);
@@ -26,11 +29,11 @@ public class UpdateReportServiceImpl implements UpdateReportService {
 		try {
 			writeMetricsToXLSX(dataMetrics);
 		} catch (IOException e) {
-			return new Message(500, "Произошла ошибка при записи в файл!");
+			return new Message(HttpStatus.INTERNAL_SERVER_ERROR, "Произошла ошибка при записи в файл!");
 		}
-		return new Message(200, "Вы успешно записали данные в файл");
+		return new Message(HttpStatus.OK, "Вы успешно записали данные в файл");
 		}else {
-			return new Message(503, "Не удалось получить данные метрики");
+			return new Message(HttpStatus.SERVICE_UNAVAILABLE, "Не удалось получить данные метрики");
 		}
 	}
 	
@@ -46,12 +49,12 @@ public class UpdateReportServiceImpl implements UpdateReportService {
 				+ "&date2=" + dateEnd
 				+ "&limit=10000&offset=1"
 				+ "&ids=" + ids
-				+ "&oauth_token=AgAAAAAVzRGcAAYDpUewH7NWikZDgZUHlRNX1Aw",
+				+ "&oauth_token=<oauth_token>",
 				Metrics.class);
 		}
 	
 	private void writeMetricsToXLSX(Metrics dataMetrics) throws IOException {
-		File file = new File("D:/Book1.xlsx");
+		File file = new File("<path_file>.xlsx");
 		FileInputStream inputStream = new FileInputStream(file);
 		XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
 		XSSFSheet sheet = workbook.getSheetAt(0);
