@@ -20,7 +20,7 @@ import by.rgs.demo.service.UpdateReportService;
 @Service
 public class UpdateReportServiceImpl implements UpdateReportService {
 	
-	public static final String uploadingDirectory = System.getProperty("user.dir") + "/reports/";
+	public static final String uploadingDirectory = System.getProperty("user.dir") + "\\src\\main\\resources\\reports\\";
 	
 	@Override
 	public Message updateReport(MetricsConfiguration metricsConf) {
@@ -54,20 +54,24 @@ public class UpdateReportServiceImpl implements UpdateReportService {
 		}
 	
 	private void writeMetricsToXLSX(Metrics dataMetrics) throws IOException {
-		File file = new File("<path_file>.xlsx");
-		FileInputStream inputStream = new FileInputStream(file);
-		XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
-		XSSFSheet sheet = workbook.getSheetAt(0);
-		int i = 1;
-		for (String metric : dataMetrics.getMetrics()) {
-			XSSFCell cell = sheet.getRow(8).getCell(i++);
-			cell.setCellValue(metric);
+		File directory = new File(uploadingDirectory);			//TODO: Move path to properties file 
+		File[] files = directory.listFiles();
+		for (File fileForStream : files) {					//TODO: Add threads and move to FileService
+			FileInputStream inputStream = new FileInputStream(fileForStream);
+			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+			XSSFSheet sheet = workbook.getSheetAt(0);
+			int i = 1;
+			for (String metric : dataMetrics.getMetrics()) {
+				XSSFCell cell = sheet.getRow(8).getCell(i++);
+				cell.setCellValue(metric);
+			}
+			inputStream.close();
+			FileOutputStream out = new FileOutputStream(fileForStream);
+			workbook.write(out);
+			workbook.close();
+			out.close();
 		}
-		inputStream.close();
-		FileOutputStream out = new FileOutputStream(file);
-		workbook.write(out);
-		workbook.close();
-		out.close();
+		
 	}
 
 }
