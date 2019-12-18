@@ -12,7 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import by.rgs.demo.model.Message;
 import by.rgs.demo.model.MetricsConfiguration;
+import by.rgs.demo.model.UserProfile;
 import by.rgs.demo.service.FileService;
+import by.rgs.demo.service.RequestService;
 import by.rgs.demo.service.UpdateReportService;
 
 @RestController
@@ -22,6 +24,8 @@ public class MetricsConfigurationController {
 	UpdateReportService updateReportService;
 	@Autowired
 	FileService fileService;
+	@Autowired
+	RequestService requestService;
 
 	@PostMapping(path = "/update-xslx", /* consumes = MediaType.APPLICATION_JSON_VALUE, */ produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> updateXSLXReport(@RequestBody MetricsConfiguration metricsConf) {
@@ -38,8 +42,15 @@ public class MetricsConfigurationController {
 	
 	@PostMapping(path = "/code")
 	public ResponseEntity<?> uploadFiles(@RequestParam("code") String code) {
-		return new ResponseEntity<Object>(code, null, HttpStatus.OK);
+		UserProfile profile = requestService.executeRequestForToken(code);
+		return new ResponseEntity<Object>(profile, null, HttpStatus.OK);
 	}
+	
+//	@GetMapping(path = "/userProfile")
+//	public ResponseEntity<?> getUserProfile() {
+//		UserProfile userProfile = requestService.executeRequestForUserProfile(null);
+//		return new ResponseEntity<Object>(userProfile, null, HttpStatus.OK);
+//	}
 	
 
 }

@@ -38,18 +38,19 @@ public class UpdateReportServiceImpl implements UpdateReportService {
 	}
 	
 	private Metrics getMetricsFromYM(MetricsConfiguration metricsConf) {
+		String accessToken = null;
 		String metricsName = String.join(",", metricsConf.getMetrics());
 		String dateStart = metricsConf.getDateStart();
 		String dateEnd = metricsConf.getDateEnd();		
 		String ids = metricsConf.getIdCount();		
 		RestTemplate restTemplate = new RestTemplate();
-		return restTemplate.getForObject("https://api-metrika.yandex.ru/stat/v1/data"
+		return restTemplate.getForObject("https://api-metrika.yandex.ru/stat/v1/data"			//TODO: Create request Factory
 				+ "?metrics=" + metricsName
 				+ "&date1=" + dateStart
 				+ "&date2=" + dateEnd
 				+ "&limit=10000&offset=1"
 				+ "&ids=" + ids
-				+ "&oauth_token=<oauth_token>",
+				+ "&oauth_token=" + accessToken,
 				Metrics.class);
 		}
 	
@@ -70,8 +71,7 @@ public class UpdateReportServiceImpl implements UpdateReportService {
 			workbook.write(out);
 			workbook.close();
 			out.close();
-		}
-		
+		}	
 	}
 
 }
