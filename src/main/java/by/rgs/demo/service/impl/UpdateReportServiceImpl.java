@@ -5,9 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,6 +24,9 @@ import by.rgs.demo.service.UpdateReportService;
 
 @Service
 public class UpdateReportServiceImpl implements UpdateReportService {
+	
+	@Autowired
+	private HttpServletRequest request;
 	
 	@Value("${url.get.counters.data}")
 	private String urlForCountersData;	
@@ -41,7 +48,8 @@ public class UpdateReportServiceImpl implements UpdateReportService {
 	}
 	
 	private Metrics getMetricsFromYM(MetricsConfiguration metricsConf) {
-		String accessToken = null;
+		HttpSession session = request.getSession(false);
+		String accessToken = (String) session.getAttribute("ASSESS_TOKEN");
 		String metricsName = String.join(",", metricsConf.getMetrics());
 		String dateStart = metricsConf.getDateStart();
 		String dateEnd = metricsConf.getDateEnd();		

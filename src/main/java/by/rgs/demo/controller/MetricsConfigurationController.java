@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 import by.rgs.demo.model.Counter;
 import by.rgs.demo.model.Message;
 import by.rgs.demo.model.MetricsConfiguration;
@@ -54,6 +55,13 @@ public class MetricsConfigurationController {
 		System.out.println("get Counters controller");
 		List<Counter> counters = requestService.getUserCounters();
 		return new ResponseEntity<Object>(counters, null, HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/download")
+	public ResponseEntity<?> downloadReports() {
+		ResponseEntity<?> files = fileService.downloadFiles();
+		return files;
+
 	}
 	
 //	@GetMapping(path = "/userProfile")

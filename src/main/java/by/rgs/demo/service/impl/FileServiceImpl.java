@@ -1,9 +1,21 @@
 package by.rgs.demo.service.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,10 +25,14 @@ import by.rgs.demo.service.FileService;
 @Service
 public class FileServiceImpl implements FileService {
 
+	@Autowired
+	private HttpServletRequest request;
 	//private static final Logger log = LoggerFactory.getLogger(FileServiceImpl.class);
-	public static final String uploadingDirectory = System.getProperty("user.dir")
+	private static final String uploadingDirectory = System.getProperty("user.dir")
 			+ "\\src\\main\\resources\\reports\\";
+	private static final String LIST_FILE_NAMES = "LIST_FILE_NAMES";
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Message uploadFiles(MultipartFile[] files) {
 		if (files.length != 0) {
@@ -29,6 +45,9 @@ public class FileServiceImpl implements FileService {
 					return new Message(HttpStatus.INTERNAL_SERVER_ERROR, "Не удалось создать директорию на сервере");
 				}
 			}
+			HttpSession session = request.getSession(false);
+			List<String> listFileNames = new ArrayList<String>();
+			session.setAttribute(LIST_FILE_NAMES, listFileNames);
 			File file;
 			for (MultipartFile multipartFile : files) {
 				file = new File(uploadingDirectory + multipartFile.getOriginalFilename());
@@ -41,6 +60,9 @@ public class FileServiceImpl implements FileService {
 					return new Message(HttpStatus.INTERNAL_SERVER_ERROR,
 							"Произошла ошибка при сохранении файла в директорию!");
 				}
+				listFileNames = (List<String>) session.getAttribute(LIST_FILE_NAMES);
+				listFileNames.add(multipartFile.getOriginalFilename());
+				session.setAttribute(LIST_FILE_NAMES, listFileNames);
 			}
 			return new Message(HttpStatus.OK, "Файлы успешно загружены!");
 		} else {
@@ -50,5 +72,24 @@ public class FileServiceImpl implements FileService {
 
 	private boolean checkExistDirectory(File directory) {
 		return directory.exists();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ResponseEntity<?> downloadFiles() {
+		HttpSession session = request.getSession(false);
+		List<String> fileNames = (List<String>) session.getAttribute(LIST_FILE_NAMES);
+		File file = new File(uploadingDirectory + fileNames.get(0));
+		InputStreamResource resource = null;
+		try {
+			resource = new InputStreamResource(new FileInputStream(file));
+		} catch (FileNotFoundException e) {
+			return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.NOT_FOUND);					// TODO: send response with message to front
+		}
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName())
+				.contentType(MediaType.APPLICATION_OCTET_STREAM)
+				.contentLength(file.length())
+				.body(resource);
 	}
 }
