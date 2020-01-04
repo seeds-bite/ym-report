@@ -1,15 +1,18 @@
 package by.rgs.demo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
+import by.rgs.demo.model.Counter;
 import by.rgs.demo.model.Message;
 import by.rgs.demo.model.MetricsConfiguration;
 import by.rgs.demo.model.UserProfile;
@@ -44,6 +47,13 @@ public class MetricsConfigurationController {
 	public ResponseEntity<?> uploadFiles(@RequestParam("code") String code) {
 		UserProfile profile = requestService.executeRequestForToken(code);
 		return new ResponseEntity<Object>(profile, null, HttpStatus.OK);
+	}
+	
+	@GetMapping(path = "/getCounters")
+	public ResponseEntity<?> getCounters() {
+		System.out.println("get Counters controller");
+		List<Counter> counters = requestService.getUserCounters();
+		return new ResponseEntity<Object>(counters, null, HttpStatus.OK);
 	}
 	
 //	@GetMapping(path = "/userProfile")

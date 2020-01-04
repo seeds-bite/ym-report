@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,6 +21,8 @@ import by.rgs.demo.service.UpdateReportService;
 @Service
 public class UpdateReportServiceImpl implements UpdateReportService {
 	
+	@Value("${url.get.counters.data}")
+	private String urlForCountersData;	
 	public static final String uploadingDirectory = System.getProperty("user.dir") + "\\src\\main\\resources\\reports\\";
 	
 	@Override
@@ -44,7 +47,7 @@ public class UpdateReportServiceImpl implements UpdateReportService {
 		String dateEnd = metricsConf.getDateEnd();		
 		String ids = metricsConf.getIdCount();		
 		RestTemplate restTemplate = new RestTemplate();
-		return restTemplate.getForObject("https://api-metrika.yandex.ru/stat/v1/data"			//TODO: Create request Factory
+		return restTemplate.getForObject(urlForCountersData			//TODO: Create request Builder
 				+ "?metrics=" + metricsName
 				+ "&date1=" + dateStart
 				+ "&date2=" + dateEnd
