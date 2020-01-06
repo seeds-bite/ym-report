@@ -10,6 +10,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -19,12 +21,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import by.rgs.demo.controller.MetricsConfigurationController;
 import by.rgs.demo.model.Message;
 import by.rgs.demo.service.FileService;
 
 @Service
 public class FileServiceImpl implements FileService {
-
+	
+	private static final Logger log = LoggerFactory.getLogger(FileServiceImpl.class);
+	
 	@Autowired
 	private HttpServletRequest request;
 	//private static final Logger log = LoggerFactory.getLogger(FileServiceImpl.class);
@@ -35,6 +40,8 @@ public class FileServiceImpl implements FileService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Message uploadFiles(MultipartFile[] files) {
+		log.debug("File directory: " + System.getProperty("user.dir"));
+		log.debug("uploadingDirectory: " + uploadingDirectory);
 		if (files.length != 0) {
 			File directory = new File(uploadingDirectory);
 			boolean isExistDirectory = checkExistDirectory(directory);

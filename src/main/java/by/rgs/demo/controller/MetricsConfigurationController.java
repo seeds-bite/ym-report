@@ -44,7 +44,7 @@ public class MetricsConfigurationController {
 	
 	@PostMapping(path = "/uploadFiles")
 	public ResponseEntity<?> uploadFiles(@RequestParam("files") MultipartFile[] files) {
-		log.debug("Пришло files[0].getName(): " + files[0].getName());
+		log.debug("Пришло files[0].getName(): " + files[0].getOriginalFilename());
 		Message message = fileService.uploadFiles(files);
 		return new ResponseEntity<Object>(message, null, message.getStatus());
 	}
