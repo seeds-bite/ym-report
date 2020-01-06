@@ -34,7 +34,7 @@ public class FileServiceImpl implements FileService {
 	private HttpServletRequest request;
 	//private static final Logger log = LoggerFactory.getLogger(FileServiceImpl.class);
 	private static final String uploadingDirectory = System.getProperty("user.dir")
-			+ "\\src\\main\\resources\\reports\\";
+			+ "/src/main/resources/reports/";
 	private static final String LIST_FILE_NAMES = "LIST_FILE_NAMES";
 
 	@SuppressWarnings("unchecked")
