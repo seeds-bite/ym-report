@@ -30,7 +30,7 @@ public class UpdateReportServiceImpl implements UpdateReportService {
 	
 	@Value("${url.get.counters.data}")
 	private String urlForCountersData;	
-	public static final String uploadingDirectory = System.getProperty("user.dir") + "\\src\\main\\resources\\reports\\";
+	public static final String uploadingDirectory = System.getProperty("user.dir") + "/src/main/resources/reports/";
 	
 	@Override
 	public Message updateReport(MetricsConfiguration metricsConf) {
