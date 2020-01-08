@@ -88,6 +88,7 @@ public class FileServiceImpl implements FileService {
 		}
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName())
+				.header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition")
 				.contentType(MediaType.APPLICATION_OCTET_STREAM)
 				.contentLength(file.length())
 				.body(resource);
