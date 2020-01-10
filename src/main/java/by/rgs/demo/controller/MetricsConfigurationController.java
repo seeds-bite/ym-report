@@ -68,6 +68,8 @@ public class MetricsConfigurationController {
 	public ResponseEntity<?> downloadReports() {
 		log.debug("downloadReports запрос");
 		ResponseEntity<?> files = fileService.downloadFiles();
+		log.debug("getHeaders files=" + files.getHeaders().toString());
+		log.debug("Body=" + files.getBody().toString());
 		return files;
 
 	}

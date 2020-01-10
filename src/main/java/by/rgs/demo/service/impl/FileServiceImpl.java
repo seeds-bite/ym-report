@@ -87,8 +87,8 @@ public class FileServiceImpl implements FileService {
 			return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.NOT_FOUND);					// TODO: send response with message to front
 		}
 		return ResponseEntity.ok()
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName())
 				.header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition")
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName())
 				.contentType(MediaType.APPLICATION_OCTET_STREAM)
 				.contentLength(file.length())
 				.body(resource);
