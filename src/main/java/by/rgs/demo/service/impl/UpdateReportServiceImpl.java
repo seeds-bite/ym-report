@@ -11,6 +11,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,7 +26,7 @@ import by.rgs.demo.service.UpdateReportService;
 
 @Service
 public class UpdateReportServiceImpl implements UpdateReportService {
-	
+	private static final Logger log = LoggerFactory.getLogger(UpdateReportServiceImpl.class);
 	@Autowired
 	private HttpServletRequest request;
 	
@@ -36,6 +38,7 @@ public class UpdateReportServiceImpl implements UpdateReportService {
 	public Message updateReport(MetricsConfiguration metricsConf) {
 		Metrics dataMetrics = getMetricsFromYM(metricsConf);
 		if(dataMetrics != null) {
+		log.debug("Metics: " + dataMetrics.toString());
 		try {
 			writeMetricsToXLSX(dataMetrics);
 		} catch (IOException e) {
@@ -83,6 +86,29 @@ public class UpdateReportServiceImpl implements UpdateReportService {
 			workbook.close();
 			out.close();
 		}	
+	}
+	
+	public String findMetricsNameInFile() throws IOException {
+		File directory = new File(uploadingDirectory);			//TODO: Move path to properties file 
+		File[] files = directory.listFiles();
+		for (File fileForStream : files) {					//TODO: Add threads and move to FileService
+			FileInputStream inputStream = new FileInputStream(fileForStream);
+			XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+			XSSFSheet sheet = workbook.getSheetAt(0);
+			int i = 1;
+//			for (String metric : dataMetrics.getMetrics()) {
+				XSSFCell cell = sheet.getRow(0).getCell(i++);
+				//cell.getCellType();
+				cell.getStringCellValue();
+				System.out.println("cell: " + cell.getStringCellValue());
+//			}
+			inputStream.close();
+			FileOutputStream out = new FileOutputStream(fileForStream);
+			workbook.write(out);
+			workbook.close();
+			out.close();
+		}	
+		return "name";
 	}
 
 }
